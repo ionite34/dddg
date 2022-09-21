@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "dddg"
+version = "0.1.0"
+description = ""
+authors = ["ionite34 <dev@ionite.io>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.28.1"
+opencv-python = "4.5.5.62"
+matplotlib = "^3.6.0"
+webcolors = "^1.12"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

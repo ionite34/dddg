@@ -1,0 +1,15 @@
+[load]
+tiles_x = 3
+tiles_y = 4
+
+[image]
+# Color sample positions for duck count n
+c1 = [0.639, 0.53]
+c2 = [0.845, 0.53]
+c3 = [0.961, 0.53]
+
+# Possible colors to be found
+colors = [
+    "white",
+    "darkblue",
+]
