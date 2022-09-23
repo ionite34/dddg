@@ -5,6 +5,7 @@ from functools import cache
 import cv2
 import webcolors
 import numpy as np
+from PIL import ImageOps, Image
 
 
 @cache
@@ -60,3 +61,63 @@ def closest_color(arr, pool: set[str] | None = None):
         bd = (b_c - arr[2]) ** 2
         min_colours[(rd + gd + bd)] = name
     return min_colours[min(min_colours.keys())]
+
+
+def _find_duck_bounds(img: np.ndarray) -> np.ndarray:
+    """
+    Find the duck bounds in an image.
+    [[top_left, top_right, bottom_left, bottom_right, size], ...]
+
+    Args:
+        img: Image to search.
+
+    Returns:
+        2D Array of duck bounds.
+    """
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # binarize the image
+    ret, bw = cv2.threshold(gray, 128, 255,
+                            cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    # find connected components
+    connectivity = 4
+    result = cv2.connectedComponentsWithStats(bw, connectivity, cv2.CV_32S)
+    nb_components, output, stats, centroids = result
+    return stats
+
+
+def find_duck(img: np.ndarray) -> np.ndarray:
+    """
+    Finds a duck within an image.
+
+    Args:
+        img: Image to search.
+
+    Returns:
+        A view of the duck within the image.
+    """
+    # Get bound stats
+    stats = _find_duck_bounds(img)
+    found = stats[(stats[:, -1] > 1200) & (stats[:, -1] < 2000)]
+    try:
+        stat = found[0]
+        y1 = stat[1]
+        y2 = stat[1] + stat[3]
+        x1 = stat[0]
+        x2 = stat[0] + stat[2]
+        # Return a cropped view of the image
+        return img[y1:y2, x1:x2]
+    except IndexError as e:
+        raise ValueError("Could not find duck bounds in image.") from e
+
+
+def pad_image(img: Image | np.ndarray, to_size=60) -> Image:
+    """Pads an image to a given size."""
+    if isinstance(img, np.ndarray):
+        img = Image.fromarray(img)
+    desired_size = to_size
+    delta_width = desired_size - img.size[0]
+    delta_height = desired_size - img.size[1]
+    pad_width = delta_width // 2
+    pad_height = delta_height // 2
+    padded = (pad_width, pad_height, delta_width - pad_width, delta_height - pad_height)
+    return ImageOps.expand(img, padded, fill=(255, 255, 255))

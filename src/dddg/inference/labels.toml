@@ -1,0 +1,11 @@
+hat = [
+    "bucket",
+    "none",
+    "wizard",
+]
+
+accessory = [
+    "brush",
+    "none",
+    "sword",
+]

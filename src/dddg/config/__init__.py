@@ -14,6 +14,6 @@ class Load(Enum):
 
 
 class Image(Enum):
-    C1: list[int] = _f["image"]["c1"]
-    C2: list[int] = _f["image"]["c2"]
-    C3: list[int] = _f["image"]["c3"]
+    C1 = _f["image"]["c1"]
+    C2 = _f["image"]["c2"]
+    C3 = _f["image"]["c3"]
